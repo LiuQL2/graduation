@@ -81,7 +81,7 @@ def showtxt(records):
 
 def store(records, f):
     for (pystr, utf8str) in records:
-        f.write("%s 1\n" % (utf8str.encode("utf8")))
+        f.write("%s\n" % (utf8str.encode("utf8")))
         # f.write("x:1\n")
 
 
