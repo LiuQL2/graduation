@@ -13,17 +13,15 @@ import socket
 import sys
 import urllib2
 from urllib2 import URLError
+import traceback
 
 import lxml.etree
 
 from configuration.settings import USER_AGENTS as user_agents
+from database.IOHandler import FileIO
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
-
-class MyException(Exception):
-    pass
 
 
 class BaseSpider(object):
@@ -93,7 +91,9 @@ class BaseSpider(object):
                 else:
                     pass
                 doc = lxml.etree.HTML(doc)
-            except:
+            except Exception, e:
+                FileIO.exceptionHandler(message=e.message)
+                print traceback.format_exc(), e.message
                 doc = None
             return doc
         except URLError, e:
@@ -104,12 +104,17 @@ class BaseSpider(object):
                 print  'The server could not fulfill the request.'
                 print  'Error code: ', e.code
                 print  'Reason: ', e.reason
+            FileIO.exceptionHandler(message= e.message)
+            print traceback.format_exc(), e.message
             return None
         except socket.timeout,e:
-            # raise MyException('There was an error: %r' % e)
             print 'Error code: socket timeout', e
+            FileIO.exceptionHandler(message= e.message)
+            print traceback.format_exc(), e.message
             return None
-        except:
+        except Exception, e:
+            FileIO.exceptionHandler(message=e.message)
+            print traceback.format_exc(), e.message
             print 'Do Not know what is wrong.'
             return None
 
@@ -132,11 +137,15 @@ class BaseSpider(object):
                 print  'The server could not fulfill the request.'
                 print  'Error code: ', e.code
                 print  'Reason: ', e.reason
+            FileIO.exceptionHandler(message= e.message)
+            print traceback.format_exc(), e.message
             return None
         except socket.timeout,e:
-            # raise MyException('There was an error: %r' % e)
-            print 'Error code: socket timeout', e
+            print 'Error code: socket timeout'
+            FileIO.exceptionHandler(message=e.message)
+            print traceback.format_exc(), e.message
             return None
-        except:
-            print 'Do Not know what is wrong.'
+        except Exception, e:
+            print traceback.format_exc(), e.message
+            FileIO.exceptionHandler(message=e.message)
             return None
